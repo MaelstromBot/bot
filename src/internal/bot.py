@@ -8,6 +8,7 @@ from discord import Intents, Message, AllowedMentions
 from .context import Context
 
 from src.api.client import APIClient
+from src.api.ws import WSClient
 
 
 class Bot(commands.Bot):
@@ -28,6 +29,7 @@ class Bot(commands.Bot):
         )
 
         self.api: APIClient = None
+        self.api_ws: WSClient = None
 
     def add_cog(self, cog) -> None:
         """Add a cog to the bot. Does not add disabled cogs."""
@@ -61,6 +63,9 @@ class Bot(commands.Bot):
 
         self.api = APIClient(getenv("API_URL"), getenv("API_TOKEN"))
         await self.api.setup()
+
+        self.api_ws = WSClient(self.api, self)
+        self.loop.create_task(self.api_ws.stayalive())
 
         await super().login(*args, **kwargs)
 
