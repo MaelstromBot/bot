@@ -50,3 +50,12 @@ class APIClient:
 
         logger.error(f"API failed 3 times on route {path} with final response code {response.status}")
         raise APIRequestFailed(response)
+
+    async def ping(self) -> bool:
+        """Ping the API to test if it is alive."""
+
+        try:
+            await self.request("GET", "/")
+            return True
+        except:
+            return False
