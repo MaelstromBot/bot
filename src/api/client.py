@@ -40,7 +40,7 @@ class APIClient:
         if not self.session or self.session.closed:
             await self.setup()
 
-        for i in range(3):
+        for _ in range(3):
             response = await self.session.request(method, self.url + path, **kwargs)
 
             if 200 <= response.status < 300:
