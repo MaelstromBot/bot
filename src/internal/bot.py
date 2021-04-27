@@ -1,11 +1,13 @@
+from os import getenv
+from traceback import format_exc
+
+from loguru import logger
 from discord.ext import commands
 from discord import Intents, Message, AllowedMentions
 
-from loguru import logger
-from traceback import format_exc
-from aiohttp import ClientSession
-
 from .context import Context
+
+from src.api.client import APIClient
 
 
 class Bot(commands.Bot):
@@ -25,7 +27,7 @@ class Bot(commands.Bot):
             **kwargs
         )
 
-        self.session: ClientSession = None
+        self.api: APIClient = None
 
     def add_cog(self, cog) -> None:
         """Add a cog to the bot. Does not add disabled cogs."""
@@ -54,10 +56,11 @@ class Bot(commands.Bot):
         logger.info(f"Extension loading finished. Success: {success}. Failed: {len(exts) - success}.")
 
     async def login(self, *args, **kwargs) -> None:
-        """Create the ClientSession before login."""
+        """Create the APIClient before login."""
         logger.info("Logging in to Discord...")
 
-        self.session = ClientSession()
+        self.api = APIClient(getenv("API_TOKEN"), getenv("API_URL"))
+        await self.api.setup()
 
         await super().login(*args, **kwargs)
 
