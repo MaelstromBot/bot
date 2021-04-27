@@ -59,7 +59,7 @@ class Bot(commands.Bot):
         """Create the APIClient before login."""
         logger.info("Logging in to Discord...")
 
-        self.api = APIClient(getenv("API_TOKEN"), getenv("API_URL"))
+        self.api = APIClient(getenv("API_URL"), getenv("API_TOKEN"))
         await self.api.setup()
 
         await super().login(*args, **kwargs)
